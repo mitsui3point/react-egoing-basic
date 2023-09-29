@@ -8,14 +8,29 @@ import './App.css';
  */
 function Header(props) {
   return <header>
-    <h1><a href='/'>{props.title}</a></h1>
+    <h1>
+      <a
+        href='/'
+        onClick={(event) => {
+          event.preventDefault();
+          props.onChangeMode();
+        }}>{props.title}</a>
+    </h1>
   </header>
 }
 function Nav(props) {
   const list = []
   for (let i = 0; i < props.topics.length; i++) {
     const t = props.topics[i];
-    list.push(<li key={t.id}><a href={'/read/'+t.id}>{t.title}</a></li>) // Each child in a list should have a unique "key" prop.
+    list.push(<li key={t.id}>
+      <a
+        id={t.id}
+        href={'/read/'+t.id}
+        onClick={(event) => {
+          event.preventDefault();
+          props.onChangeMode(event.target.id);
+        }}>{t.title}</a>
+      </li>) // Each child in a list should have a unique "key" prop.
   }
   return <nav>
     <ol>
@@ -37,8 +52,12 @@ function App() {
   ]
   return (
     <div className="App">
-      <Header title="React"></Header>
-      <Nav topics={topics}></Nav>
+      <Header title="React" onChangeMode={() => {
+        alert('Header');
+      }}></Header>
+      <Nav topics={topics} onChangeMode={(id) => {
+        alert(id)
+      }}></Nav>
       <Article title="Welcome" body="Hello, WEB"></Article>
       <Article title="Hi" body="Hello, React"></Article>
     </div>
