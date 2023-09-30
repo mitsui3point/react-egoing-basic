@@ -1,5 +1,5 @@
-// import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import {useState} from 'react' // useState 훅; react 기본 함수
 /**
  * 컴포넌트(사용자 정의 태그)
  *  1.함수형
@@ -12,23 +12,25 @@ function Header(props) {
       <a
         href='/'
         onClick={(event) => {
-          event.preventDefault();
-          props.onChangeMode();
-        }}>{props.title}</a>
+          event.preventDefault()
+          props.onChangeMode()
+        }}>{props.title}</a> 
     </h1>
   </header>
 }
 function Nav(props) {
   const list = []
   for (let i = 0; i < props.topics.length; i++) {
-    const t = props.topics[i];
+    const t = props.topics[i]
     list.push(<li key={t.id}>
       <a
         id={t.id}
         href={'/read/'+t.id}
         onClick={(event) => {
-          event.preventDefault();
-          props.onChangeMode(event.target.id);
+          event.preventDefault()
+          console.log(event.target.id, Number(event.target.id))
+
+          props.onChangeMode(Number(event.target.id))
         }}>{t.title}</a>
       </li>) // Each child in a list should have a unique "key" prop.
   }
@@ -45,23 +47,37 @@ function Article(props) {
   </article>
 }
 function App() {
+  // const _mode = useState('WELCOME')
+  // const mode = _mode[0] // - 0: state 값 호출시 사용되는 variable
+  // const setMode = mode[1] // - 1: state 값 변경시 사용되는 function
+  const [mode, setMode] = useState('WELCOME')
+  const [id, setId] = useState(null)
   const topics = [
     {'id': 1, 'title': 'html', 'body': 'html is...'},
     {'id': 2, 'title': 'css', 'body': 'css is...'},
     {'id': 3, 'title': 'js', 'body': 'js is...'},
   ]
+  let content = null
+  if (mode === 'WELCOME') {
+    content = <Article title="Welcome" body="Hello, WEB"></Article>
+  }
+  console.log(id);
+  if (mode === 'READ') {
+    const {title, body} = topics[id - 1]
+    content = <Article title={title} body={body}></Article>
+  }
   return (
     <div className="App">
       <Header title="React" onChangeMode={() => {
-        alert('Header');
+        setMode('WELCOME')
       }}></Header>
-      <Nav topics={topics} onChangeMode={(id) => {
-        alert(id)
+      <Nav topics={topics} onChangeMode={(_id) => {
+        setMode('READ')
+        setId(_id)
       }}></Nav>
-      <Article title="Welcome" body="Hello, WEB"></Article>
-      <Article title="Hi" body="Hello, React"></Article>
+      {content}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
