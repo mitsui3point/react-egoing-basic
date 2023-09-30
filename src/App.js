@@ -57,15 +57,32 @@ function Article(props) {
     </article>
   )
 }
+function Button(props) {
+  const { url, text, onClick } = props
+  return (
+    <li>
+      <a
+        href={url}
+        onClick={event => {
+          event.preventDefault()
+          onClick()
+        }}
+      >
+        {text}
+      </a>
+    </li>
+  )
+}
 function Create(props) {
+  const { onCreate } = props
   return (
     <article>
       <h2>Create</h2>
       <form
-        onSubmit={(event) => {
+        onSubmit={event => {
           event.preventDefault()
-          let { title, body } = event.target
-          props.onCreate(title.value, body.value)
+          const { title, body } = event.target
+          onCreate(title.value, body.value)
         }}
       >
         <p>
@@ -81,6 +98,43 @@ function Create(props) {
     </article>
   )
 }
+function Update(props) {
+  const { topic, onUpdate } = props
+  const [title, setTitle] = useState(topic.title)
+  const [body, setBody] = useState(topic.body)
+  return (
+    <article>
+      <h2>Update</h2>
+      <form
+        onSubmit={event => {
+          event.preventDefault()
+          const { title, body } = event.target
+          onUpdate(title.value, body.value)
+        }}
+      >
+        <p>
+          <input
+            name='title'
+            placeholder='title'
+            value={title}
+            onChange={event => setTitle(event.target.value)}
+          />
+        </p>
+        <p>
+          <textarea
+            name='body'
+            placeholder='body'
+            value={body}
+            onChange={event => setBody(event.target.value)}
+          />
+        </p>
+        <p>
+          <input type='submit' value='Update' />
+        </p>
+      </form>
+    </article>
+  )
+}
 function App() {
   const [mode, setMode] = useState('WELCOME') // 페이지 구분
   const [id, setId] = useState(null)
@@ -91,12 +145,26 @@ function App() {
     { id: 3, title: 'js', body: 'js is...' }
   ])
   let content = null
+  let createButton = null
+  let updateButton = null
+  const buttons = {
+    create: (
+      <Button text='Create' url='/create' onClick={() => setMode('CREATE')} />
+    ),
+    update: (
+      <Button
+        text='Update'
+        url={`/update/{id}`}
+        onClick={() => setMode('UPDATE')}
+      />
+    )
+  }
   if (mode === 'WELCOME') {
-    content = <Article title='Welcome' body='Hello, WEB'></Article>
+    content = <Article title='Welcome' body='Hello, WEB' />
   }
   if (mode === 'READ') {
-    const { title, body } = topics[id - 1]
-    content = <Article title={title} body={body}></Article>
+    const { title, body } = topics.find(o => o.id === id)
+    content = <Article title={title} body={body} />
   }
   /**
     - const[value, setValue] = useState(PRIMITIVE)
@@ -119,8 +187,31 @@ function App() {
           setId(nextId)
           setNextId(nextId + 1)
         }}
-      ></Create>
+      />
     )
+  }
+  if (mode === 'UPDATE') {
+    content = (
+      <Update
+        topic={topics.find(o => o.id === id)}
+        onUpdate={(title, body) => {
+          const index = topics.findIndex(o => o.id === id)
+          const updatedTopic = { id: id, title: title, body: body }
+          topics[index] = updatedTopic
+          const newTopics = [...topics]
+          setTopics(newTopics)
+
+          setMode('READ')
+        }}
+      />
+    )
+    createButton = null
+  }
+  if (mode !== 'UPDATE' && mode !== 'CREATE') {
+    createButton = buttons.create
+  }
+  if (mode === 'READ') {
+    updateButton = buttons.update
   }
   console.log('count', count++)
   return (
@@ -130,24 +221,19 @@ function App() {
         onChangeMode={() => {
           setMode('WELCOME')
         }}
-      ></Header>
+      />
       <Nav
         topics={topics}
-        onChangeMode={(_id) => {
+        onChangeMode={_id => {
           setMode('READ')
           setId(_id)
         }}
-      ></Nav>
+      />
       {content}
-      <a
-        href='/create'
-        onClick={(event) => {
-          event.preventDefault()
-          setMode('CREATE')
-        }}
-      >
-        Create
-      </a>
+      <ul>
+        {createButton}
+        {updateButton}
+      </ul>
     </div>
   )
 }
