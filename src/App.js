@@ -57,7 +57,7 @@ function Article(props) {
     </article>
   )
 }
-function Button(props) {
+function AButton(props) {
   const { url, text, onClick } = props
   return (
     <li>
@@ -70,6 +70,20 @@ function Button(props) {
       >
         {text}
       </a>
+    </li>
+  )
+}
+function Button(props) {
+  const { text, data, onClick } = props
+  return (
+    <li>
+      <input
+        type='button'
+        value={text}
+        onClick={event => {
+          onClick(data)
+        }}
+      />
     </li>
   )
 }
@@ -147,15 +161,30 @@ function App() {
   let content = null
   let createButton = null
   let updateButton = null
+  let deleteButton = null
   const buttons = {
     create: (
-      <Button text='Create' url='/create' onClick={() => setMode('CREATE')} />
+      <AButton text='Create' url='/create' onClick={() => setMode('CREATE')} />
     ),
     update: (
-      <Button
+      <AButton
         text='Update'
         url={`/update/{id}`}
         onClick={() => setMode('UPDATE')}
+      />
+    ),
+    delete: (
+      <Button
+        text='Delete'
+        data={id}
+        onClick={data => {
+          const index = topics.findIndex(o => o.id === data)
+          topics.splice(index, 1)
+          const newTopics = [...topics]
+          setTopics([...newTopics])
+
+          setMode('WELCOME')
+        }}
       />
     )
   }
@@ -207,11 +236,14 @@ function App() {
     )
     createButton = null
   }
-  if (mode !== 'UPDATE' && mode !== 'CREATE') {
+  const isRequiredCreateButton = mode !== 'UPDATE' && mode !== 'CREATE'
+  const isRequiredUpdateButton = mode === 'READ'
+  if (isRequiredCreateButton) {
     createButton = buttons.create
   }
-  if (mode === 'READ') {
+  if (isRequiredUpdateButton) {
     updateButton = buttons.update
+    deleteButton = buttons.delete
   }
   console.log('count', count++)
   return (
@@ -233,6 +265,7 @@ function App() {
       <ul>
         {createButton}
         {updateButton}
+        {deleteButton}
       </ul>
     </div>
   )
