@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# React 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 컴포넌트
 
-## Available Scripts
+- 컴포넌트를 만드는 기술인 리액트 덕분에 개발자는 하나의 독립된 부품으로 태그를 만들수 있게 되었다.
+- 이 부품을 이용하게 되면 더 적은 복잡도로 소프트웨어를 만들 수 있게 된다.
+- 이 부품을 이용하면 컴포넌트를 다른 사람에게 공유할 수도 있다.
+- 다른 사람이 만든 컴포넌트를 내가 사용할 수도 있다.
 
-In the project directory, you can run:
+## PROP
 
-### `npm start`
+- 컴포넌트의 속성
+```html
+<!-- markup 의 속성 -->
+<!-- src, width, height -->
+<img src=“image.jpg” width=“100” height=“100”>
+```
+```html
+<!-- 리액트 컴포넌트의 속성 -->
+<!-- title -->
+<Header title=“React”></Header>
+```
+```javascript
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+- 생성된 태그 추적을 위한 ``<li>`` tag 의 key 생성
+```javascript
+// 리액트가 생성된 태그들을 추적해야 하는데, 추적할 key가 없을경우에 오류를 발생시킴
+function Nav(props) {
+  const list = []
+  for (let i = 0; i < props.topics.length; i++) {
+    const t = props.topics[i]
+    list.push(
+      <li key={t.id}>
+        <a
+          id={t.id}
+          href={'/read/' + t.id}
+          onClick={(event) => {
+            event.preventDefault()
+            props.onChangeMode(Number(event.target.id))
+          }}
+        >
+          {t.title}
+        </a>
+      </li>
+    ) // <li> key 넣는 이유; Each child in a list should have a unique "key" prop.
+  }
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Event
 
-### `npm test`
+```html
+<!-- 여기 html 태그를 보면 onclick 이라는 property가 있다. 이 property 덕분에 사용자는 경고창을 띄울 수 있다. -->
+<input type=“button” onclick=“alert(‘hi’)”>
+```
+```javascript
+// 컴포넌트 선언부
+function Header(props) {
+  return <header>
+    <h1><a href='/'>{props.title}</a></h1>
+    <h1>
+      <a
+        href='/'
+        onClick={(event) => {
+          event.preventDefault();
+          props.onChangeMode();
+        }}>{props.title}</a>
+    </h1>
+  </header>
+  // jsx 문법 onclick(X) => onClick(O) 
+}
+// 컴포넌트 호출부
+<Header title="React" onChangeMode={() => {
+  alert('Header');
+}}></Header>
+```
+- Jsx
+    - https://ko.legacy.reactjs.org/docs/introducing-jsx.html
+- Jsx 속성 정의
+    - https://ko.legacy.reactjs.org/docs/introducing-jsx.html#specifying-attributes-with-jsx
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## State
+- Component function
+    - 입력 : prop, state
+    - 출력 : return
+- Prop vs State
+    - Prop : component 외부 사용자를 위한 데이터
+    - State : component 내부 사용자를 위한 데이터 
+- useState hook 을 사용해야 한다
+    - Import {useState} from ‘react’;
+    - 리액트에서 제공하는 기본 함수
+    - useState(‘WELCOME’)
+        - 배열 리턴
+        - 0: state 값 호출시 사용되는 variable
+        - 1: state 값 변경시 사용되는 function
 
-### `npm run build`
+## Create / Read
+- 글, 폼 생성
+- const[value, setValue] = useState(PRIMITIVE)
+    - PRIMITIVE; string, number, bigint, boolean, undefined, symbol, null
+    - 기존방식 그대로 set
+- const[value, setValue] = useState(Object)
+    - Object, Array(복사해서 넣어줘야 함)
+      - https://react.dev/learn/updating-objects-in-state
+      - https://react.dev/learn/updating-arrays-in-state
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Update
+- 글 폼 업데이트
+- Update = Create + Read
+- Prop(;component 외부 사용자를 위한 데이터)
+    - Immutable 하므로 State(;component 내부 사용자를 위한 데이터) 로 치환해서 변경해 줘야 함
+    - Input, textarea 각각 onChange event 에 setState
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Delete
+- 글 폼 삭제
+- 삭제 후 삭제된 상세에 접근할 수 없으므로 목록 페이지로 노출
