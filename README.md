@@ -1,5 +1,34 @@
 # React 
 
+## 설치
+
+### node 설치(없을 경우, 혹은 버전이 맞지않는 경우)
+```bash
+$ node -v
+$ brew install node
+```
+### react 프로젝트 설치
+```bash
+$ npx create-react-app my-app
+$ cd my-app
+$ npm start
+```
+
+## build & run
+
+### build
+```bash
+$ npm run build
+```
+### run from build file
+```bash
+$ npx serve -s build
+```
+### run
+```bash
+$ npm start
+```
+
 ## 컴포넌트
 
 - 컴포넌트를 만드는 기술인 리액트 덕분에 개발자는 하나의 독립된 부품으로 태그를 만들수 있게 되었다.
@@ -20,8 +49,6 @@
 <!-- title -->
 <Header title=“React”></Header>
 ```
-```javascript
-
 ```
 - 생성된 태그 추적을 위한 ``<li>`` tag 의 key 생성
 ```javascript
